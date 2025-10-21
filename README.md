@@ -1,4 +1,4 @@
-# 🎨 Elloqany Ads Website | Professional RTL React Showcase
+# 🎨 Ellaqany Ads Website | Professional RTL React Showcase
 
 A high-performance, single-page application (SPA) built for Alloqany Advertising, featuring full Right-to-Left (RTL) support and a modern, responsive design based on Material-UI. The core structure is modular, allowing for easy content updates via a central configuration file.
 
