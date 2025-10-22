@@ -19,7 +19,6 @@ const Hero = () => {
       }}
     >
       <picture>
-        <source media="(min-width: 1024px)" srcSet="/assets/hero-deskop.jpg" />
         <img
           src="/assets/copy.jpg"
           alt="Hero image"

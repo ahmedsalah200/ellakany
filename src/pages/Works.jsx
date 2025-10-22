@@ -1,22 +1,21 @@
-import { useState, useMemo } from 'react'
-import {  
-  Box,  
-  Container,  
-  Typography,  
-  Grid,  
-  Card,  
-  CardMedia,  
-  CardContent,  
-  Button,  
-  Chip,  
-  IconButton,  
-  Modal,  
-  Fade,  
+import { useState, useMemo } from 'react' 
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  TextField,
+  MenuItem,
+  Button,
+  Chip,
+  IconButton,
+  Modal,
+  Fade,
   Backdrop,
-  TextField,  
-  MenuItem,  
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import CloseIcon from '@mui/icons-material/Close'
 import Header from '../components/Header'
@@ -25,15 +24,8 @@ import Footer from '../components/Footer'
 import { worksData, workTypes } from '../data/worksData'
 
 const Works = () => {
-  // ثابت لعدد العناصر في كل صفحة
-  const ITEMS_PER_PAGE = 3; 
-
-  const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1) // حالة الصفحة الحالية
-  
-  // تم إزالة: [itemsToShow, setItemsToShow]
-  
+  const [itemsToShow, setItemsToShow] = useState(3)
   const [currentImageIndex, setCurrentImageIndex] = useState({})
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedWork, setSelectedWork] = useState(null)
@@ -48,52 +40,32 @@ const Works = () => {
     setCurrentImageIndex(initialIndex)
   }, [worksData])
 
-  // تصفية وبحث الأعمال
+  // تصفية الأعمال
   const filteredWorks = useMemo(() => {
     let filtered = worksData
-    // تصفية حسب النوع
+
+    // تصفية حسب النوع فقط
     if (filterType !== 'all') {
       filtered = filtered.filter((work) => work.type === filterType)
     }
-    // البحث في العنوان
-    if (searchTerm) {
-      filtered = filtered.filter((work) =>
-        work.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-    // عند تغيير الفلترة أو البحث، أعد ضبط الصفحة
-    setCurrentPage(1)
+
     return filtered
-  }, [searchTerm, filterType])
+  }, [filterType])
 
-  // حساب إجمالي الصفحات
-  const totalPages = Math.ceil(filteredWorks.length / ITEMS_PER_PAGE);
+  // الأعمال المعروضة حالياً
+  const displayedWorks = filteredWorks.slice(0, itemsToShow)
+  const hasMore = filteredWorks.length > itemsToShow
 
-  // حساب العناصر المعروضة حالياً بناءً على الصفحة
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedWorks = filteredWorks.slice(startIndex, endIndex);
+  const handleLoadMore = () => {
+    setItemsToShow((prev) => prev + 3)
+  }
 
-  // دالة تغيير الصفحات
-  const handlePageChange = (direction) => {
-    setCurrentPage(prevPage => {
-      if (direction === 'next') {
-        return Math.min(prevPage + 1, totalPages);
-      } else if (direction === 'prev') {
-        return Math.max(prevPage - 1, 1);
-      }
-      return prevPage;
-    });
-    // يمكن إضافة كود للتمرير للأعلى هنا إذا لزم الأمر
-  };
-  
-  // تم إزالة: const hasMore و handleLoadMore
-  
   const handleImageChange = (workId, direction) => {
     setCurrentImageIndex(prev => {
       const work = worksData.find(w => w.id === workId)
       if (!work) return prev
-            const total = work.images ? work.images.length : 1
+      
+      const total = work.images ? work.images.length : 1
       const current = prev[workId] || 0
       const next = direction === 'next' ? (current + 1) % total : (current - 1 + total) % total
       return { ...prev, [workId]: next }
@@ -113,8 +85,10 @@ const Works = () => {
 
   const handleModalImageChange = (direction) => {
     if (!selectedWork) return
-        const total = selectedWork.images ? selectedWork.images.length : 1
-    setModalImageIndex(prev =>       direction === 'next' ? (prev + 1) % total : (prev - 1 + total) % total
+    
+    const total = selectedWork.images ? selectedWork.images.length : 1
+    setModalImageIndex(prev => 
+      direction === 'next' ? (prev + 1) % total : (prev - 1 + total) % total
     )
   }
 
@@ -167,30 +141,12 @@ const Works = () => {
             </Typography>
           </Container>
         </Box>
-        {/* قسم البحث والفلترة */}
+
+        {/* قسم الفلترة */}
         <Box sx={{ py: 6, backgroundColor: '#f8fafc' }}>
           <Container maxWidth="lg">
             <Grid container spacing={3} sx={{ mb: 4 }} data-aos="fade-in">
-              {/* البحث */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  placeholder="ابحث عن عمل..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: <SearchIcon sx={{ ml: 1, color: '#64748b' }} />,
-                  }}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: 2,
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                    },
-                  }}
-                />
-              </Grid>
-              {/* الفلتر */}
+              {/* الفلتر فقط */}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -213,6 +169,7 @@ const Works = () => {
                 </TextField>
               </Grid>
             </Grid>
+
             {/* عدد النتائج */}
             <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }} data-aos="fade-in">
               <Typography variant="body1" sx={{ color: '#64748b' }}>
@@ -228,6 +185,7 @@ const Works = () => {
                 />
               )}
             </Box>
+
             {/* عرض الأعمال */}
             {displayedWorks.length > 0 ? (
               <>
@@ -253,11 +211,11 @@ const Works = () => {
                         }}
                       >
                         {/* منطقة الصور */}
-                        <Box
-                           sx={{
-                             position: 'relative',
-                             width: '100%',
-                             height: "auto",
+                        <Box 
+                          sx={{ 
+                            position: 'relative', 
+                            width: '100%', 
+                            height: "auto",
                             overflow: 'hidden',
                             cursor: 'pointer',
                             backgroundColor: 'rgba(15, 118, 110, 0.04)',
@@ -275,6 +233,7 @@ const Works = () => {
                               transition: 'opacity 0.5s ease-in-out',
                             }}
                           />
+                          
                           {/* أزرار التحكم - تظهر فقط إذا كان هناك أكثر من صورة */}
                           {(work.images && work.images.length > 1) && (
                             <>
@@ -314,8 +273,9 @@ const Works = () => {
                                     ml: { xs: 0.2, sm: 0.5 },
                                   }}
                                 >
-                                  <ArrowForwardIosIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
-                                  </IconButton>
+                                  <ArrowForwardIosIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />  
+                                </IconButton>
+
                                 {/* السهم التالي */}
                                 <IconButton
                                   onClick={(e) => {
@@ -334,9 +294,10 @@ const Works = () => {
                                     mr: { xs: 0.2, sm: 0.5 },
                                   }}
                                 >
-                                  <ArrowForwardIosIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
-                                  </IconButton>
+                                  <ArrowForwardIosIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />  
+                                </IconButton>
                               </Box>
+
                               {/* النقاط أسفل الصورة */}
                               <Box
                                 sx={{
@@ -348,30 +309,31 @@ const Works = () => {
                                   gap: 0.6,
                                 }}
                               >
-                                {work.images.map((_, i) => (
-                                    <Box
-                                      key={i}
-                                      onClick={(e) => {
+                                {work.images.map((_, i) => (  
+                                  <Box  
+                                    key={i}  
+                                    onClick={(e) => {
                                       e.stopPropagation()
-                                      setCurrentImageIndex(prev => ({ ...prev, [work.id]: i }))
-                                      }}
-                                      sx={{
-                                        width: (currentImageIndex[work.id] || 0) === i ? 10 : 8,
-                                        height: (currentImageIndex[work.id] || 0) === i ? 10 : 8,
-                                        borderRadius: '50%',
-                                        backgroundColor:
-                                          (currentImageIndex[work.id] || 0) === i
-                                            ? '#F59E0B'
-                                            : 'rgba(255,255,255,0.6)',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                      }}
-                                    />
-                                  ))}
-                                </Box>
+                                      setCurrentImageIndex(prev => ({ ...prev, [work.id]: i }))  
+                                    }}  
+                                    sx={{  
+                                      width: (currentImageIndex[work.id] || 0) === i ? 10 : 8,  
+                                      height: (currentImageIndex[work.id] || 0) === i ? 10 : 8,  
+                                      borderRadius: '50%',  
+                                      backgroundColor:  
+                                        (currentImageIndex[work.id] || 0) === i  
+                                          ? '#F59E0B'  
+                                          : 'rgba(255,255,255,0.6)',  
+                                      cursor: 'pointer',  
+                                      transition: 'all 0.3s ease',  
+                                    }}  
+                                  />  
+                                ))}  
+                              </Box>
                             </>
                           )}
                         </Box>
+
                         <CardContent sx={{ flexGrow: 1, p: 3 }}>
                           <Box
                             sx={{
@@ -397,6 +359,7 @@ const Works = () => {
                               {work.year}
                             </Typography>
                           </Box>
+
                           <Typography
                             variant="h6"
                             sx={{
@@ -409,6 +372,7 @@ const Works = () => {
                           >
                             {work.title}
                           </Typography>
+
                           <Typography
                             variant="body2"
                             sx={{
@@ -423,70 +387,31 @@ const Works = () => {
                     </Grid>
                   ))}
                 </Grid>
-                
-                {/* قسم ترقيم الصفحات (Pagination) */}
-                {(totalPages > 1 && displayedWorks.length > 0) && (
-                  <Box sx={{ 
-                    textAlign: 'center', 
-                    mt: 6, 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    gap: 2 
-                  }} data-aos="fade-in">
-                    
-                    {/* زر السابق */}
-                    <Button
-                        variant="outlined"
-                        size="large"
-                        onClick={() => handlePageChange('prev')}
-                        disabled={currentPage === 1}
-                        sx={{
-                            color: '#0f766e',
-                            borderColor: '#0f766e',
-                            px: 4,
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            borderRadius: 2,
-                            '&:hover': {
-                                backgroundColor: 'rgba(15, 118, 110, 0.1)',
-                                borderColor: '#0f766e',
-                            },
-                            transition: 'all 0.3s ease',
-                        }}
-                    >
-                        السابق
-                    </Button>
 
-                    {/* رقم الصفحة الحالي / إجمالي الصفحات */}
-                    <Typography variant="h6" sx={{ color: '#0f766e', fontWeight: 700 }}>
-                        صفحة {currentPage} من {totalPages}
-                    </Typography>
-
-                    {/* زر التالي */}
+                {/* زر عرض المزيد */}
+                {hasMore && (
+                  <Box sx={{ textAlign: 'center', mt: 6 }} data-aos="zoom-in">
                     <Button
-                        variant="contained"
-                        size="large"
-                        onClick={() => handlePageChange('next')}
-                        disabled={currentPage === totalPages || totalPages === 0}
-                        sx={{
-                            backgroundColor: '#0f766e',
-                            color: 'white',
-                            px: 4,
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            borderRadius: 2,
-                            '&:hover': {
-                                backgroundColor: '#0d5a54',
-                                transform: 'translateY(-3px)',
-                                boxShadow: '0 8px 20px rgba(15, 118, 110, 0.3)',
-                            },
-                            transition: 'all 0.3s ease',
-                        }}
+                      variant="contained"
+                      size="large"
+                      onClick={handleLoadMore}
+                      sx={{
+                        backgroundColor: '#0f766e',
+                        color: 'white',
+                        px: 6,
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        borderRadius: 2,
+                        '&:hover': {
+                          backgroundColor: '#0d5a54',
+                          transform: 'translateY(-3px)',
+                          boxShadow: '0 8px 20px rgba(15, 118, 110, 0.3)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
                     >
-                        التالي
+                      عرض المزيد
                     </Button>
                   </Box>
                 )}
@@ -514,6 +439,7 @@ const Works = () => {
             )}
           </Container>
         </Box>
+
         {/* Modal لعرض الصورة بشكل مكبر */}
         <Modal
           open={modalOpen}
@@ -531,9 +457,9 @@ const Works = () => {
           }}
         >
           <Fade in={modalOpen}>
-            <Box
-               sx={{
-                 position: 'relative',
+            <Box 
+              sx={{ 
+                position: 'relative',
                 outline: 'none',
                 maxWidth: '90vw',
                 maxHeight: '90vh',
@@ -559,6 +485,7 @@ const Works = () => {
               >
                 <CloseIcon />
               </IconButton>
+
               {/* الصورة في الـ Modal */}
               {selectedWork && (
                 <>
@@ -574,8 +501,8 @@ const Works = () => {
                       boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
                     }}
                   />
-
-                    {/* أزرار التنقل في الـ Modal - تظهر فقط إذا كان هناك أكثر من صورة */}
+                  
+                  {/* أزرار التنقل في الـ Modal - تظهر فقط إذا كان هناك أكثر من صورة */}
                   {(selectedWork.images && selectedWork.images.length > 1) && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gap: 2 }}>
                       <IconButton
@@ -588,12 +515,13 @@ const Works = () => {
                           },
                         }}
                       >
-                        {/* تم تدوير الأيقونة لتعمل كسهم للخلف */}
-                        <ArrowForwardIosIcon sx={{ transform: 'rotate(180deg)' }} /> 
+                        <ArrowForwardIosIcon sx={{ transform: 'rotate(180deg)' }} />
                       </IconButton>
+
                       <Typography variant="body2" sx={{ color: 'white', minWidth: 60, textAlign: 'center' }}>
                         {modalImageIndex + 1} / {selectedWork.images.length}
                       </Typography>
+
                       <IconButton
                         onClick={() => handleModalImageChange('next')}
                         sx={{
@@ -608,6 +536,7 @@ const Works = () => {
                       </IconButton>
                     </Box>
                   )}
+
                   {/* معلومات الصورة */}
                   <Box sx={{ textAlign: 'center', mt: 2 }}>
                     <Typography variant="h6" sx={{ color: 'white', fontWeight: 700 }}>
@@ -622,6 +551,7 @@ const Works = () => {
             </Box>
           </Fade>
         </Modal>
+
         <ContactSection />
       </main>
       <Footer />
