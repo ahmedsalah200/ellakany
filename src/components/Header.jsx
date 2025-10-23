@@ -22,7 +22,7 @@ const Header = () => {
         elevation={0}
         sx={{
           backgroundColor: 'white', 
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid #dadee3ff',
           zIndex: 1500, 
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
@@ -46,7 +46,7 @@ const Header = () => {
                         height: { xs: 80, md: 100 },
                         width: 'auto',
                         maxWidth: '100%',
-                        ml: 2,
+                        ml: 2,                        
                     }}
                 />          
             </Link>

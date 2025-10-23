@@ -12,7 +12,7 @@ export const siteConfig = {
   email: 'salahebrahim696@gmail.com',
   
   // العنوان
-  address: 'دسوق شارع عبد العزيز - أمام كوافير أبو شامه',
+  address: `دسوق شارع عبد العزيز - أمام صالون أبو شامه`,
   latitude: 31.13212617439407,
   longitude: 30.64395387559611,
 googleMapsLink: 'https://www.google.com/maps/place/31%C2%B007\'55.7%22N+30%C2%B038\'47.5%22E/@31.13212617439407,30.64395387559611,17z',  
@@ -25,7 +25,7 @@ googleMapsLink: 'https://www.google.com/maps/place/31%C2%B007\'55.7%22N+30%C2%B0
   
   // الإحصائيات
   stats: {
-    experience: 25,
+    experience: 30,
     projects: 1000,
     clients: 800,
   },
@@ -36,7 +36,7 @@ googleMapsLink: 'https://www.google.com/maps/place/31%C2%B007\'55.7%22N+30%C2%B0
     'بانرات خارجية',
     'فلكس عالي الجودة',
     'فينيل احترافي',
-    'لوحات إرشادية',
+    'لوحات مدرسية',
     'طباعة رقمية',
     'هويات بصرية'
   ],

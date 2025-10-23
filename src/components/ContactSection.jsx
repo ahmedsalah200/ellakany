@@ -36,7 +36,7 @@ const ContactSection = () => {
     const newErrors = {}
     if (!formData.name.trim()) newErrors.name = 'الاسم مطلوب'
     if (!formData.bannerType) newErrors.bannerType = 'نوع اليافطة مطلوب'
-    if (formData.details.length > 200) newErrors.details = 'التفاصيل يجب ألا تتجاوز 200 حرف'
+    if (formData.details.length > 100) newErrors.details = 'التفاصيل يجب ألا تتجاوز 100 حرف'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -159,7 +159,7 @@ ${formData.details ? `- تفاصيل إضافية: ${formData.details}` : ''}.`;
                     onChange={handleChange}
                     error={!!errors.details}
                     helperText={
-                      errors.details || `${formData.details.length}/200 حرف`
+                      errors.details || `${formData.details.length}/100 حرف`
                     }
                     sx={{ '& .MuiOutlinedInput-root': { backgroundColor: 'white' } }}
                   />

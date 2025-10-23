@@ -25,10 +25,11 @@ const Footer = () => {
           {/* القسم الأول - الشعار والوصف */}
           <Grid item xs={12} md={4}>
             <Box sx={{ mb: 2 }}>
+              {/* تم الافتراض هنا أنك تستخدم الشعار في مسار /logo.svg */}
               <img 
                 src="/assets/logo.svg" 
                 alt={siteConfig.companyName}
-                style={{ height: 70, marginBottom: 16 }}
+                style={{ height: 60, marginBottom: 16 }}
               />
               <Typography variant="body2" sx={{ color: '#94a3b8', lineHeight: 1.8 }}>
                 {siteConfig.companyName} - {siteConfig.tagline}
@@ -229,7 +230,14 @@ const Footer = () => {
                 <Typography variant="body2" sx={{ color: '#94a3b8' }}>
                   {siteConfig.workingHours}
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    // التعديل هنا لتمييز يوم الإجازة 
+                    color: '#F59E0B', 
+                    fontWeight: 600 
+                  }}
+                >
                   {siteConfig.dayOff}: إجازة
                 </Typography>
               </Box>
